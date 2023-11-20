@@ -24,7 +24,7 @@ from llava.model.builder import load_pretrained_model
 from llava.utils import disable_torch_init
 from llava.mm_utils import tokenizer_image_token, get_model_name_from_path, KeywordsStoppingCriteria
 
-from utils.argument import args
+from llava.argument import args
 
 from PIL import Image
 import math
@@ -133,8 +133,8 @@ def eval_model(args):
         ans_file.flush()
 
     ans_file.close()
-    if not os.path.exists(f"{args.exp_path}/step1_result.jsonl"):
-        shutil.copy(args.answers_file_classification, f"{args.exp_path}/step1_result.jsonl")
+    if not os.path.exists(f"{args.exp_path}/result.jsonl"):
+        shutil.copy(args.answers_file_classification, f"{args.exp_path}/result.jsonl")
 
 
 if __name__ == "__main__":
