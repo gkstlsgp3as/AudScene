@@ -13,7 +13,7 @@ class GroundingNetInput:
         Please define here how to process the batch and prepare the 
         input only for the ground tokenizer. 
 
-        audio_embeddings: a tensor of shape [batch, num_tokens, 768]
+        audio_embeddings: a tensor of shape [batch, num_tokens, C]
         """
 
         self.set = True # enabale random drop during the training

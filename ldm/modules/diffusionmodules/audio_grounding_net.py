@@ -21,7 +21,7 @@ class PositionNet(nn.Module):
         self.null_audio_feature = torch.nn.Parameter(torch.zeros([self.in_dim]))
 
     def forward(self, audio_embeddings, mask):
-        B, N, _ = audio_embeddings.shape # B: batch_size, N: num_tokens, C: self.in_dim (=768)
+        B, N, _ = audio_embeddings.shape # B: batch_size, N: num_tokens, C: self.in_dim
         audio_null = self.null_audio_feature.view(1, 1, -1) # 1*1*C
         audio_embeddings = mask * audio_embeddings + (1 - mask) * audio_null
 

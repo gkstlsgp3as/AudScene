@@ -213,8 +213,16 @@ class Trainer:
         disable_grads(self.autoencoder)
         disable_grads(self.text_encoder)
 
-        ### Define audio_encoder -------------------------------------------- ###
-        self.audio_encoder = Adapt_CLAP_Module(enable_fusion=False)
+        # ### Define audio_encoder (before MLP layer: C=768) -------------------------------------------- ###
+        #     (Change Line 35 in [config/vggsound_audio.yaml] as in_dim: 512 -> "in_dim: 768" to use this audio encoder)
+        # self.audio_encoder = Adapt_CLAP_Module(enable_fusion=False)
+        # self.audio_encoder.load_ckpt() # download the default pretrained checkpoint.
+        # self.audio_encoder.eval()
+        # disable_grads(self.audio_encoder)
+        # ### ------------------------------------------------------------------ ###
+
+        ### Define audio_encoder (after MLP layer: C=512) -------------------------------------------- ###
+        self.audio_encoder = laion_clap.CLAP_Module(enable_fusion=False)
         self.audio_encoder.load_ckpt() # download the default pretrained checkpoint.
         self.audio_encoder.eval()
         disable_grads(self.audio_encoder)
