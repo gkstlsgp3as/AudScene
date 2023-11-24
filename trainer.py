@@ -21,6 +21,12 @@ from transformers import get_cosine_schedule_with_warmup, get_constant_schedule_
 from copy import deepcopy
 from inpaint_mask_func import draw_masks_from_boxes
 from ldm.modules.attention import BasicTransformerBlock
+
+from clap_modules import Adapt_CLAP_Module # Make sure you have clap_modules.py in the same directory
+
+import librosa
+import laion_clap
+
 try:
     from apex import amp
 except:
@@ -207,6 +213,13 @@ class Trainer:
         disable_grads(self.autoencoder)
         disable_grads(self.text_encoder)
 
+        ### Define audio_encoder -------------------------------------------- ###
+        self.audio_encoder = Adapt_CLAP_Module(enable_fusion=False)
+        self.audio_encoder.load_ckpt() # download the default pretrained checkpoint.
+        self.audio_encoder.eval()
+        disable_grads(self.audio_encoder)
+        ### ------------------------------------------------------------------ ###
+
         # = = = = = = = = = = = = = load from ckpt: (usually for inpainting training) = = = = = = = = = = = = = #
         if self.config.ckpt is not None:
             first_stage_ckpt = torch.load(self.config.ckpt, map_location="cpu")
@@ -347,7 +360,24 @@ class Trainer:
         if self.grounding_downsampler_input != None:
             grounding_extra_input = self.grounding_downsampler_input.prepare(batch)
 
-        return z, t, context, inpainting_extra_input, grounding_extra_input 
+        return z, t, context, inpainting_extra_input, grounding_extra_input
+
+    @torch.no_grad()
+    def get_audio_embeddings(self, batch):
+        """
+        This function is used to extract audio embeddings from audio files.
+        Output shape: [batch_size, num_tokens, hidden_dim]
+        """
+        B = len(batch['audio_path'])
+        batch_audio_path = batch['audio_path'] # A list of shape [B]
+
+        ### Your code here ---------------------------------------- ###
+        audio_embeddings = self.audio_encoder.get_audio_embedding_from_filelist(x = batch_audio_path, use_tensor=True)
+        audio_embeddings = audio_embeddings.unsqueeze(1)  # [B, N (=1), C]
+        ### -------------------------------------------------------- ###
+
+        return audio_embeddings
+        
 
 
     def run_one_step(self, batch):
@@ -355,7 +385,8 @@ class Trainer:
         noise = torch.randn_like(x_start)
         x_noisy = self.diffusion.q_sample(x_start=x_start, t=t, noise=noise)
 
-        grounding_input = self.grounding_tokenizer_input.prepare(batch)
+        audio_embeddings = self.get_audio_embeddings(batch) # [B, N, C]
+        grounding_input = self.grounding_tokenizer_input.prepare(batch, audio_embeddings)
         input = dict(x=x_noisy, 
                     timesteps=t, 
                     context=context, 
@@ -453,7 +484,8 @@ class Trainer:
             if self.grounding_downsampler_input != None:
                 grounding_extra_input = self.grounding_downsampler_input.prepare(batch)
             
-            grounding_input = self.grounding_tokenizer_input.prepare(batch)
+            audio_embeddings = self.get_audio_embeddings(batch) # [B, N, C]
+            grounding_input = self.grounding_tokenizer_input.prepare(batch, audio_embeddings)
             input = dict( x=None, 
                           timesteps=None, 
                           context=context, 

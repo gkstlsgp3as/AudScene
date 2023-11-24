@@ -32,7 +32,7 @@ model:
     grounding_tokenizer:
       target: ldm.modules.diffusionmodules.audio_grounding_net.PositionNet
       params:
-        resize_input: 256
+        in_dim: 768   # audio_embedding.shape = (B, N, 768)
         out_dim: 768 
 
 

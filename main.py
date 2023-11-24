@@ -14,8 +14,8 @@ if __name__ == "__main__":
     multiprocessing.set_start_method('spawn')
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--DATA_ROOT", type=str,  default="DATA", help="path to DATA")
-    parser.add_argument("--OUTPUT_ROOT", type=str,  default="OUTPUT", help="path to OUTPUT")
+    parser.add_argument("--DATA_ROOT", type=str,  default="/data2/VGGSound/", help="path to DATA")  # Check this
+    parser.add_argument("--OUTPUT_ROOT", type=str,  default="/data2/jungwon/AudScene/gligen_checkpoints", help="path to OUTPUT")  # Check this
 
     parser.add_argument("--name", type=str,  default="test", help="experiment will be stored in OUTPUT_ROOT/name")
     parser.add_argument("--seed", type=int,  default=123, help="used in sampler")
