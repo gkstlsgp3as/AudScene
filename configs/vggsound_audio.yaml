@@ -23,11 +23,11 @@ model:
     use_checkpoint: True
 
 
-    grounding_downsampler:
-      target: ldm.modules.diffusionmodules.audio_grounding_downsampler.GroundingDownsampler
-      params:
-        resize_input: 256
-        out_dim: 8 
+    # grounding_downsampler:
+    #   target: ldm.modules.diffusionmodules.audio_grounding_downsampler.GroundingDownsampler
+    #   params:
+    #     resize_input: 256
+    #     out_dim: 8 
 
     grounding_tokenizer:
       target: ldm.modules.diffusionmodules.audio_grounding_net.PositionNet
@@ -75,5 +75,5 @@ grounding_tokenizer_input:
   target: grounding_input.audio_grounding_tokinzer_input.GroundingNetInput
 
 
-grounding_downsampler_input:
-  target: grounding_input.audio_grounding_downsampler_input.GroundingDSInput
+# grounding_downsampler_input:
+#   target: grounding_input.audio_grounding_downsampler_input.GroundingDSInput

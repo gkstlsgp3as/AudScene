@@ -46,7 +46,7 @@ class ImageCaptionSaver:
     def __call__(self, images, real, masked_real, captions, seen):
         
         save_path = os.path.join(self.base_path, str(seen).zfill(8)+'.png')
-        torchvision.utils.save_image( images, save_path, nrow=self.nrow, normalize=self.normalize, scale_each=self.scale_each, range=self.range )
+        torchvision.utils.save_image( images, save_path, nrow=self.nrow, normalize=self.normalize, scale_each=self.scale_each, value_range=self.range )
         
         save_path = os.path.join(self.base_path, str(seen).zfill(8)+'_real.png')
         torchvision.utils.save_image( real, save_path, nrow=self.nrow)
@@ -54,7 +54,7 @@ class ImageCaptionSaver:
         if masked_real is not None:
             # only inpaiting mode case 
             save_path = os.path.join(self.base_path, str(seen).zfill(8)+'_mased_real.png')
-            torchvision.utils.save_image( masked_real, save_path, nrow=self.nrow, normalize=self.normalize, scale_each=self.scale_each, range=self.range)
+            torchvision.utils.save_image( masked_real, save_path, nrow=self.nrow, normalize=self.normalize, scale_each=self.scale_each, value_range=self.range)
 
         assert images.shape[0] == len(captions)
 

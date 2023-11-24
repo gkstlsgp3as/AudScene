@@ -140,9 +140,9 @@ class DatasetCatalog:
         self.VGGSound = {
             "target": "dataset.dataset_audio.AudioDataset",
             "train_params":dict(
-                image_rootdir = os.path.join(ROOT, 'image/train/'), # ROOT: DATA_ROOT in main.py
-                audio_rootdir = os.path.join(ROOT, 'audio/train/'), 
-                caption_path = os.path.join(ROOT, '<Place your caption_path>') 
+                image_rootdir = os.path.join(ROOT, 'VGGSound/image/train/'), # ROOT: DATA_ROOT in main.py
+                audio_rootdir = os.path.join(ROOT, 'VGGSound/audio/train/'), 
+                caption_path = os.path.join(ROOT, 'jungwon/fake_caption.json') 
             ),
         }
 

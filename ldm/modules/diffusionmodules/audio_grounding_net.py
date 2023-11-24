@@ -23,6 +23,7 @@ class PositionNet(nn.Module):
     def forward(self, audio_embeddings, mask):
         B, N, _ = audio_embeddings.shape # B: batch_size, N: num_tokens, C: self.in_dim
         audio_null = self.null_audio_feature.view(1, 1, -1) # 1*1*C
+        mask = mask.view(mask.shape[0], 1, 1) # B*1*1
         audio_embeddings = mask * audio_embeddings + (1 - mask) * audio_null
 
         objs = self.linears(audio_embeddings)
