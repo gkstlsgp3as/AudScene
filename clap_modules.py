@@ -172,7 +172,7 @@ class Adapt_CLAP_Module(laion_clap.CLAP_Module):
         for k in keys:
             input_dict[k] = torch.cat([d[k].unsqueeze(0) for d in data], dim=0).to(device)
         
-        if num_tokens == 0:
+        if num_tokens == 1:
             audio_embeds = self.model.encode_audio(input_dict, device=device)["embedding"]
         else:
             hidden_embeds = self.model.encode_audio(input_dict, device=device)["fine_grained_embedding"]
@@ -193,7 +193,7 @@ class Adapt_CLAP_Module(laion_clap.CLAP_Module):
         audio_embeds = F.normalize(audio_embeds, dim=-1)
         return audio_embeds
          
-    def get_audio_embedding_from_filelist(self, x, use_tensor=False, num_tokens=0):
+    def get_audio_embedding_from_filelist(self, x, use_tensor=False, num_tokens=1):
             """get audio embeddings from the audio file list
 
             Parameters
