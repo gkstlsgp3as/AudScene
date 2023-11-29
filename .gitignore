@@ -87,3 +87,4 @@ lib/nms/cpu_nms.c
 
 
 gligen_checkpoints/
+generated_images/

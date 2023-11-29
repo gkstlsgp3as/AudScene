@@ -38,7 +38,7 @@ def alpha_generator(length, type=None):
     linear deacy stage 
     alpha=0 stage. 
     
-    For example if length=100, type=[0.8,0.1,0.1]
+    For example if length=1000, type=[0.8,0.1,0.1]
     then the first 800 stpes, alpha will be 1, and then linearly decay to 0 in the next 100 steps,
     and the last 100 stpes are 0.    
     """
@@ -452,7 +452,7 @@ if __name__ == "__main__":
     
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--folder", type=str,  default="generation_samples", help="root folder for output")
+    parser.add_argument("--folder", type=str,  default="/data2/jungwon/AudScene/generated_images", help="root folder for output")
 
 
     parser.add_argument("--batch_size", type=int, default=5, help="")
@@ -637,10 +637,10 @@ if __name__ == "__main__":
     ]
 
 
-    starting_noise = torch.randn(args.batch_size, 4, 64, 64).to(device)
-    starting_noise = None
+    # starting_noise = torch.randn(args.batch_size, 4, 64, 64).to(device)
+    # starting_noise = None
     for meta in meta_list:
-        run(meta, args, starting_noise)
+        run(meta, args)
 
     
 

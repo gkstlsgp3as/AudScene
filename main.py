@@ -1,6 +1,7 @@
 import os
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+#os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+#local_rank = int(os.environ["LOCAL_RANK"])
 
 import argparse
 import torch
@@ -46,9 +47,10 @@ if __name__ == "__main__":
     
     parser.add_argument('--enable_ema', default=False, type=lambda x:x.lower() == "true")
     parser.add_argument("--ema_rate", type=float,  default=0.9999, help="")
-    parser.add_argument("--total_iters", type=int,  default=500000, help="")
+    parser.add_argument("--total_iters", type=int,  default=50000, help="") # default: 500000
     parser.add_argument("--save_every_iters", type=int,  default=5000, help="")
     parser.add_argument("--disable_inference_in_training", type=lambda x:x.lower() == "true",  default=False, help="Do not do inference, thus it is faster to run first a few iters. It may be useful for debugging ")
+    parser.add_argument("--random_drop", default=None, help="This controls the rate of random_drop of guidance token. default is 0.1")
 
 
     args = parser.parse_args()

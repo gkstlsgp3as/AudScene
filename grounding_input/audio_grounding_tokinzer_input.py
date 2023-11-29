@@ -7,7 +7,7 @@ class GroundingNetInput:
     def __init__(self):
         self.set = False 
 
-    def prepare(self, batch, audio_embeddings):
+    def prepare(self, batch, audio_embeddings, no_random_drop=None):
         """
         batch should be the output from dataset.
         Please define here how to process the batch and prepare the 
@@ -16,7 +16,10 @@ class GroundingNetInput:
         audio_embeddings: a tensor of shape [batch, num_tokens, C]
         """
 
-        self.set = True # enabale random drop during the training
+        if no_random_drop is None:
+            self.set = True # enabale random drop during the training
+        else:
+            self.set = False # random drop
 
         mask = batch['mask']
 

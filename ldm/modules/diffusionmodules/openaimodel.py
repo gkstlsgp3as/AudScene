@@ -417,7 +417,7 @@ class UNetModel(nn.Module):
         breakpoint() # TODO 
 
 
-    def forward(self, input):
+    def forward(self, input, random_drop=None):
 
         if ("grounding_input" in input):
             grounding_input = input["grounding_input"]
@@ -425,8 +425,12 @@ class UNetModel(nn.Module):
             # Guidance null case
             grounding_input = self.grounding_tokenizer_input.get_null_input()
 
-        if self.training and random.random() < 0.1 and self.grounding_tokenizer_input.set: # random drop for guidance 
-            grounding_input = self.grounding_tokenizer_input.get_null_input()
+        if random_drop==None:
+            if self.training and random.random() < 0.1 and self.grounding_tokenizer_input.set: # random drop for guidance 
+                grounding_input = self.grounding_tokenizer_input.get_null_input()
+        else:
+            if self.training and random.random() < float(random_drop) and self.grounding_tokenizer_input.set: # random drop for guidance 
+                grounding_input = self.grounding_tokenizer_input.get_null_input()
 
 
         # Grounding tokens: B*N*C

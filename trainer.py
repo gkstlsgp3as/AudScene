@@ -213,20 +213,20 @@ class Trainer:
         disable_grads(self.autoencoder)
         disable_grads(self.text_encoder)
 
-        # ### Define audio_encoder (before MLP layer: C=768) -------------------------------------------- ###
-        #     (Change Line 35 in [config/vggsound_audio.yaml] as in_dim: 512 -> "in_dim: 768" to use this audio encoder)
-        # self.audio_encoder = Adapt_CLAP_Module(enable_fusion=False)
-        # self.audio_encoder.load_ckpt() # download the default pretrained checkpoint.
-        # self.audio_encoder.eval()
-        # disable_grads(self.audio_encoder)
-        # ### ------------------------------------------------------------------ ###
-
-        ### Define audio_encoder (after MLP layer: C=512) -------------------------------------------- ###
-        self.audio_encoder = laion_clap.CLAP_Module(enable_fusion=False)
+        ### Define audio_encoder (before MLP layer: C=768) -------------------------------------------- ###
+            # (Change Line 35 in [config/vggsound_audio.yaml] as in_dim: 512 -> "in_dim: 768" to use this audio encoder)
+        self.audio_encoder = Adapt_CLAP_Module(enable_fusion=False)
         self.audio_encoder.load_ckpt() # download the default pretrained checkpoint.
         self.audio_encoder.eval()
         disable_grads(self.audio_encoder)
         ### ------------------------------------------------------------------ ###
+
+        # ### Define audio_encoder (after MLP layer: C=512) -------------------------------------------- ###
+        # self.audio_encoder = laion_clap.CLAP_Module(enable_fusion=False)
+        # self.audio_encoder.load_ckpt() # download the default pretrained checkpoint.
+        # self.audio_encoder.eval()
+        # disable_grads(self.audio_encoder)
+        # ### ------------------------------------------------------------------ ###
 
         # = = = = = = = = = = = = = load from ckpt: (usually for inpainting training) = = = = = = = = = = = = = #
         if self.config.ckpt is not None:
@@ -388,7 +388,7 @@ class Trainer:
         
 
 
-    def run_one_step(self, batch):
+    def run_one_step(self, batch, random_drop=None):
         x_start, t, context, inpainting_extra_input, grounding_extra_input = self.get_input(batch)
         noise = torch.randn_like(x_start)
         x_noisy = self.diffusion.q_sample(x_start=x_start, t=t, noise=noise)
@@ -401,7 +401,7 @@ class Trainer:
                     inpainting_extra_input=inpainting_extra_input,
                     grounding_extra_input=grounding_extra_input,
                     grounding_input=grounding_input)
-        model_output = self.model(input)
+        model_output = self.model(input, random_drop)
         
         loss = torch.nn.functional.mse_loss(model_output, noise) * self.l_simple_weight
 
@@ -422,7 +422,7 @@ class Trainer:
             batch = next(self.loader_train)
             batch_to_device(batch, self.device)
 
-            loss = self.run_one_step(batch)
+            loss = self.run_one_step(batch, random_drop=self.config.random_drop)
             loss.backward()
             self.opt.step() 
             self.scheduler.step()
