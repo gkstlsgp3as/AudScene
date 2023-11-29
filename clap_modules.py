@@ -165,7 +165,25 @@ class Adapt_CLAP_Module(laion_clap.CLAP_Module):
     def __init__(self, enable_fusion=False):
         super().__init__(enable_fusion=False)
     
-    def get_audio_non_projection_features(self, data):
+    def get_audio_non_projection_features(self, data, num_tokens):
+        device = next(self.parameters()).device
+        input_dict = {}
+        keys = data[0].keys()
+        for k in keys:
+            input_dict[k] = torch.cat([d[k].unsqueeze(0) for d in data], dim=0).to(device)
+        
+        if num_tokens == 0:
+            audio_embeds = self.model.encode_audio(input_dict, device=device)["embedding"]
+        else:
+            hidden_embeds = self.model.encode_audio(input_dict, device=device)["fine_grained_embedding"]
+            dim0, dim1, dim2 = hidden_embeds.shape
+            index = torch.arange(num_tokens, device=device).repeat_interleave(dim1 * dim2 // num_tokens).view(1, dim1, dim2).repeat(dim0, 1, 1)
+            output = torch.zeros((dim0, num_tokens, dim2), dtype=torch.float32, device=device)
+            audio_embeds = output.scatter_reduce( 1, index, hidden_embeds, reduce='mean', include_self=False)
+        audio_embeds = F.normalize(audio_embeds, dim=-1)
+        return audio_embeds
+
+    def get_audio_features_with_multiple_tokens(self, data, num_token=32):
         device = next(self.parameters()).device
         input_dict = {}
         keys = data[0].keys()
@@ -175,7 +193,7 @@ class Adapt_CLAP_Module(laion_clap.CLAP_Module):
         audio_embeds = F.normalize(audio_embeds, dim=-1)
         return audio_embeds
          
-    def get_audio_embedding_from_filelist(self, x, use_tensor=False):
+    def get_audio_embedding_from_filelist(self, x, use_tensor=False, num_tokens=0):
             """get audio embeddings from the audio file list
 
             Parameters
@@ -193,7 +211,7 @@ class Adapt_CLAP_Module(laion_clap.CLAP_Module):
             audio_input = []
             for f in x:
                 # load the waveform of the shape (T,), should resample to 48000
-                audio_waveform, _ = librosa.load(f, sr=48000)           
+                audio_waveform, _ = librosa.load(f, sr=48000, duration=10)           
                 # quantize
                 audio_waveform = int16_to_float32(float32_to_int16(audio_waveform))
                 audio_waveform = torch.from_numpy(audio_waveform).float()
@@ -206,7 +224,7 @@ class Adapt_CLAP_Module(laion_clap.CLAP_Module):
                     require_grad=audio_waveform.requires_grad
                 )
                 audio_input.append(temp_dict)
-            audio_embed = self.get_audio_non_projection_features(audio_input)
+            audio_embed = self.get_audio_non_projection_features(audio_input, num_tokens)
             if not use_tensor:
                 audio_embed = audio_embed.detach().cpu().numpy()
             return audio_embed
