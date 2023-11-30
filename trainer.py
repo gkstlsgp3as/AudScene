@@ -380,8 +380,9 @@ class Trainer:
         batch_audio_path = batch['audio_path'] # A list of shape [B]
 
         ### Your code here ---------------------------------------- ###
-        audio_embeddings = self.audio_encoder.get_audio_embedding_from_filelist(x = batch_audio_path, use_tensor=True)
-        audio_embeddings = audio_embeddings.unsqueeze(1)  # [B, N (=1), C]
+        audio_embeddings = self.audio_encoder.get_audio_embedding_from_filelist(x = batch_audio_path, use_tensor=True, num_tokens=32)
+        if len(audio_embeddings.shape) == 2:
+            audio_embeddings = audio_embeddings.unsqueeze(1)  # [B, N (=1), C]
         ### -------------------------------------------------------- ###
 
         return audio_embeddings

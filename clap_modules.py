@@ -180,18 +180,18 @@ class Adapt_CLAP_Module(laion_clap.CLAP_Module):
             index = torch.arange(num_tokens, device=device).repeat_interleave(dim1 * dim2 // num_tokens).view(1, dim1, dim2).repeat(dim0, 1, 1)
             output = torch.zeros((dim0, num_tokens, dim2), dtype=torch.float32, device=device)
             audio_embeds = output.scatter_reduce( 1, index, hidden_embeds, reduce='mean', include_self=False)
-        audio_embeds = F.normalize(audio_embeds, dim=-1)
+        # audio_embeds = F.normalize(audio_embeds, dim=-1)
         return audio_embeds
 
-    def get_audio_features_with_multiple_tokens(self, data, num_token=32):
-        device = next(self.parameters()).device
-        input_dict = {}
-        keys = data[0].keys()
-        for k in keys:
-            input_dict[k] = torch.cat([d[k].unsqueeze(0) for d in data], dim=0).to(device)
-        audio_embeds = self.model.encode_audio(input_dict, device=device)["embedding"]
-        audio_embeds = F.normalize(audio_embeds, dim=-1)
-        return audio_embeds
+    # def get_audio_features_with_multiple_tokens(self, data, num_token=32):
+    #     device = next(self.parameters()).device
+    #     input_dict = {}
+    #     keys = data[0].keys()
+    #     for k in keys:
+    #         input_dict[k] = torch.cat([d[k].unsqueeze(0) for d in data], dim=0).to(device)
+    #     audio_embeds = self.model.encode_audio(input_dict, device=device)["embedding"]
+    #     audio_embeds = F.normalize(audio_embeds, dim=-1)
+    #     return audio_embeds
          
     def get_audio_embedding_from_filelist(self, x, use_tensor=False, num_tokens=1):
             """get audio embeddings from the audio file list
