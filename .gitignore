@@ -88,3 +88,7 @@ lib/nms/cpu_nms.c
 
 gligen_checkpoints/
 generated_images/
+contrastive_learned_CLAP2/
+contrastive_learned_CLAP3/
+contrastive_learned_CLAP4/
+contrastive_learned_CLAP5/

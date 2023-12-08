@@ -138,6 +138,7 @@ def get_audio_embeddings(batch, audio_encoder):
     batch_audio_path = batch['audio_path'] # A list of audio_paths: shape = [B]
 
     ### Your code here ---------------------------------------- ###
+    # audio_embeddings = audio_encoder.get_audio_embedding_from_filelist(x = batch_audio_path, use_tensor=True)
     audio_embeddings = audio_encoder.get_audio_embedding_from_filelist(x = batch_audio_path, use_tensor=True, num_tokens=32)
     if len(audio_embeddings.shape) == 2:
         audio_embeddings = audio_embeddings.unsqueeze(1)  # [B, N (=1), C]
@@ -172,16 +173,18 @@ def run(meta, args, starting_noise=None):
     ### Define audio_encoder (before MLP layer: C=768) -------------------------------------------- ###
         # (Change Line 35 in [config/vggsound_audio.yaml] as in_dim: 512 -> "in_dim: 768" to use this audio encoder)
     audio_encoder = Adapt_CLAP_Module(enable_fusion=False)
-    audio_encoder.load_ckpt() # download the default pretrained checkpoint.
+    audio_checkpoint = torch.load("/data2/jungwon/AudScene/contrastive_learned_CLAP4/checkpoint_epoch_135.pth") # /data2/jungwon/AudScene/contrastive_learned_CLAP2/checkpoint_epoch_40.pth
+    audio_encoder.load_state_dict(audio_checkpoint['model_state_dict'])
     audio_encoder.eval()
     disable_grads(audio_encoder)
     ### ------------------------------------------------------------------ ###
-    
+
     # ### Define audio_encoder (after MLP layer: C=512) -------------------------------------------- ###
-    # audio_encoder = laion_clap.CLAP_Module(enable_fusion=False)
-    # audio_encoder.load_ckpt() # download the default pretrained checkpoint.
-    # audio_encoder.eval()
-    # disable_grads(audio_encoder)
+    # self.audio_encoder = laion_clap.CLAP_Module(enable_fusion=False)
+    # audio_checkpoint = torch.load("/data2/jungwon/AudScene/contrastive_learned_CLAP4/checkpoint_epoch_135.pth")
+    # self.audio_encoder.load_state_dict(audio_checkpoint['model_state_dict'])
+    # self.audio_encoder.eval()
+    # disable_grads(self.audio_encoder)
     # ### ------------------------------------------------------------------ ###
 
     # - - - - - sampler - - - - - # 
@@ -250,10 +253,10 @@ if __name__ == "__main__":
     parser.add_argument("--DATA_ROOT", type=str,  default="/data2/", help="path to DATA")
     parser.add_argument("--folder", type=str,  default="/data2/jungwon/AudScene/generated_images", help="root folder for output")
 
-    parser.add_argument("--yaml_file", type=str,  default="configs/vggsound_audio.yaml", help="paths to base configs.")
+    parser.add_argument("--yaml_file", type=str,  default="jungwon/AudScene/gligen_checkpoints/test_10/tag00/train_config_file.yaml", help="paths to base configs.")
     parser.add_argument("--batch_size", type=int, default=4, help="")
     parser.add_argument("--workers", type=int,  default=1, help="")
-    parser.add_argument("--ckpt", type=str, default="/data2/jungwon/AudScene/gligen_checkpoints/test_1/tag00/checkpoint_latest.pth")
+    parser.add_argument("--ckpt", type=str, default="/data2/jungwon/AudScene/gligen_checkpoints/test_10/tag00/checkpoint_latest.pth")
     parser.add_argument("--no_plms", action='store_true', help="use DDIM instead. WARNING: I did not test the code yet")
     parser.add_argument("--guidance_scale", type=float,  default=7.5, help="")
     parser.add_argument("--negative_prompt", type=str,  default='longbody, lowres, bad anatomy, bad hands, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality', help="")
@@ -263,10 +266,10 @@ if __name__ == "__main__":
 
     meta_list = [
         dict(
-            prompt = "", # "A small barn on the hill is lit by the sunset."
+            prompt = "",
             alpha_type = [1.0, 0.0, 0.0], # If you don't want to use guiding token, set this value to [0, 0, 1]
-            audio_path = "/data2/VGGSound/audio_small/test/0/00wORCOKNHw_000014.wav",
-            save_folder_name = "try_0_no_prompt"
+            audio_path = "/data2/VGGSound/audio_mag20_aud40_1206/test/M/MgD5JedaXGs_000020.wav",  # "/data2/VGGSound/audio_mag_threshold_25/test/K/KQAR_64a35I_000011.wav",
+            save_folder_name = "try_3_no_prompt"
         )
     ]
 

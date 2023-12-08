@@ -32,7 +32,7 @@ model:
     grounding_tokenizer:
       target: ldm.modules.diffusionmodules.audio_grounding_net_2.PositionNet
       params:
-        in_dim: 768   # audio_embedding.shape = (B, N, in_dim) in_dim = 512 or 768
+        in_dim: 512   # audio_embedding.shape = (B, N, in_dim) in_dim = 512 or 768
         out_dim: 768 
 
 
@@ -66,7 +66,7 @@ text_encoder:
 
 train_dataset_names: 
   VGGSound:
-    prob_use_caption: 0.9 # default= 1
+    prob_use_caption: 0.5 # default= 1
     image_size: 512
     random_flip: True
 

@@ -66,7 +66,7 @@ text_encoder:
 
 train_dataset_names: 
   VGGSound:
-    prob_use_caption: 0.9 # default= 1
+    prob_use_caption: 0.8 # default= 1
     image_size: 512
     random_flip: True
 

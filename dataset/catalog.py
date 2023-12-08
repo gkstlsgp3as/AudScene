@@ -140,14 +140,14 @@ class DatasetCatalog:
         self.VGGSound = {
             "target": "dataset.dataset_audio.AudioDataset",
             "train_params":dict(
-                image_rootdir = os.path.join(ROOT, 'VGGSound/image_small/train/'), # ROOT: DATA_ROOT in main.py
-                audio_rootdir = os.path.join(ROOT, 'VGGSound/audio_small/train/'), 
-                caption_path = os.path.join(ROOT, 'jungwon/LLaVA/data/captions/Curated_VGGSound_captions_small.json') 
+                image_rootdir = os.path.join(ROOT, "VGGSound/image_mag20_aud40_caption_1208/train/"), # ROOT: DATA_ROOT in main.py
+                audio_rootdir = os.path.join(ROOT, "VGGSound/audio_mag20_aud40_caption_1208/train/"), 
+                caption_path = os.path.join(ROOT, 'jungwon/LLaVA/data/captions/VGGSound_mag20_aud40_caption_1208_train_captions.json') 
             ),
             "val_params":dict(
-                image_rootdir = os.path.join(ROOT, 'VGGSound/image_small/test/'), # ROOT: DATA_ROOT in main.py
-                audio_rootdir = os.path.join(ROOT, 'VGGSound/audio_small/test/'), 
-                caption_path = os.path.join(ROOT, 'jungwon/LLaVA/data/captions/Curated_VGGSound_test_captions_small.json') 
+                image_rootdir = os.path.join(ROOT, "VGGSound/image_mag20_aud40_caption_1208/test/"), # ROOT: DATA_ROOT in main.py
+                audio_rootdir = os.path.join(ROOT, 'VGGSound/audio_mag20_aud40_caption_1208/test/'), 
+                caption_path = os.path.join(ROOT, 'jungwon/LLaVA/data/captions/VGGSound_mag20_aud40_caption_1208_test_captions.json') 
             ),
         }
 

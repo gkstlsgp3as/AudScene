@@ -8,7 +8,7 @@ import torch
 from omegaconf import OmegaConf
 import numpy as np
 import random
-from trainer import Trainer
+from trainer2 import Trainer
 from distributed import synchronize
 import os 
 import torch.multiprocessing as multiprocessing
@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
     parser.add_argument("--base_learning_rate", type=float,  default=5e-5, help="")
     parser.add_argument("--weight_decay", type=float,  default=0.0, help="")
-    parser.add_argument("--warmup_steps", type=int,  default=5000, help="") # default: 10000
+    parser.add_argument("--warmup_steps", type=int,  default=10000, help="")
     parser.add_argument("--scheduler_type", type=str,  default='constant', help="cosine or constant")
     parser.add_argument("--batch_size", type=int,  default=2, help="")
     parser.add_argument("--workers", type=int,  default=1, help="")

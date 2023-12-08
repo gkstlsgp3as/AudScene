@@ -8,7 +8,7 @@ import torch
 from omegaconf import OmegaConf
 import numpy as np
 import random
-from trainer import Trainer
+from trainer_with_contrastive import Trainer
 from distributed import synchronize
 import os 
 import torch.multiprocessing as multiprocessing

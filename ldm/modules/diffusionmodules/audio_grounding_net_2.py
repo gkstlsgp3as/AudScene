@@ -17,6 +17,11 @@ class PositionNet(nn.Module):
         #     nn.SiLU(),
         #     nn.Linear(512, out_dim),
         # )
+        self.linears = nn.Sequential(
+            nn.Linear(self.in_dim, 512),
+            nn.SiLU(),
+            nn.Linear(512, out_dim),
+        )
 
         self.null_audio_feature = torch.nn.Parameter(torch.zeros([self.in_dim]))
 
@@ -26,7 +31,6 @@ class PositionNet(nn.Module):
         mask = mask.view(mask.shape[0], 1, 1) # B*1*1
         audio_embeddings = mask * audio_embeddings + (1 - mask) * audio_null
 
-        objs = audio_embeddings
-        # objs = self.linears(audio_embeddings)
+        objs = self.linears(audio_embeddings)
         assert objs.shape == torch.Size([B, N, self.out_dim])
         return objs
