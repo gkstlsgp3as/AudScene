@@ -13,7 +13,15 @@ class PositionNet(nn.Module):
         self.fourier_embedder = FourierEmbedder(num_freqs=fourier_freqs)
         self.position_dim = fourier_freqs*2*4 # 2 is sin&cos, 4 is xyxy
 
-        self.linears = nn.Sequential(
+        self.linears_1 = nn.Sequential(
+            nn.Linear(self.in_dim + self.position_dim, 512),
+            nn.SiLU(),
+            nn.Linear(512, 512),
+            nn.SiLU(),
+            nn.Linear(512, out_dim),
+        )
+
+        self.linears_2 = nn.Sequential(
             nn.Linear(self.in_dim + self.position_dim, 512),
             nn.SiLU(),
             nn.Linear(512, 512),
@@ -34,8 +42,10 @@ class PositionNet(nn.Module):
         xyxy_null = self.null_position_feature.view(1, 1, -1) # 1*1*(4*fourier_freqs*2)
         xyxy_embedding = mask * xyxy_embedding + (1 - mask) * xyxy_null
 
-        objs = self.linears(torch.cat([audio_embeddings, xyxy_embedding], dim=-1))
+        objs_1 = self.linears_1(torch.cat([audio_embeddings, xyxy_embedding], dim=-1))
+        objs_2 = self.linears_2(torch.cat([audio_embeddings, xyxy_embedding], dim=-1))
+        B, N, C = objs_1.shape
+        objs = torch.stack([objs_1, objs_2], dim=2).view(B, N * 2, C)
 
-        # objs = self.linears(audio_embeddings)
         # assert objs.shape == torch.Size([B, N, self.out_dim])
         return objs

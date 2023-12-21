@@ -79,6 +79,8 @@ def load_ckpt(ckpt_path):
     
     saved_ckpt = torch.load(ckpt_path)
     config = saved_ckpt["config_dict"]["_content"]
+    config['model']['params']['grounding_tokenizer']['target'] = 'ldm.modules.diffusionmodules.audio_grounding_net4_old.PositionNet'
+    config['grounding_tokenizer_input']['target'] = 'grounding_input.audio_grounding_tokinzer_input_old.GroundingNetInput'
 
     model = instantiate_from_config(config['model']).to(device).eval()
     autoencoder = instantiate_from_config(config['autoencoder']).to(device).eval()
@@ -156,7 +158,7 @@ def prepare_batch(meta, batch_size=1):
     batch = {}
     batch["audio_path"] = [meta["audio_path"]] * batch_size
     batch["mask"] = torch.ones(batch_size)
-    batch["bbox"] = torch.tensor(meta["bbox"]).repeat(batch_size, 1) # torch.Size([batch_size, 4])
+    # batch["bbox"] = torch.tensor(meta["bbox"]).repeat(batch_size, 1) # torch.Size([batch_size, 4])
 
     return batch_to_device(batch, device)
 
@@ -225,6 +227,11 @@ def run(meta, args, starting_noise=None, audio_encoder=None):
         sample = Image.fromarray(sample.astype(np.uint8))
         sample.save(  os.path.join(output_folder, img_name)   )
 
+
+
+
+
+
 if __name__ == "__main__":
     
 
@@ -233,7 +240,7 @@ if __name__ == "__main__":
     parser.add_argument("--folder", type=str,  default="/data2/jungwon/AudScene/generated_images", help="root folder for output")
 
     parser.add_argument("--yaml_file", type=str,  default="jungwon/AudScene/gligen_checkpoints/test_10/tag00/train_config_file.yaml", help="paths to base configs.")
-    parser.add_argument("--batch_size", type=int, default=4, help="")
+    parser.add_argument("--batch_size", type=int, default=10, help="")
     parser.add_argument("--workers", type=int,  default=1, help="")
     parser.add_argument("--ckpt", type=str, default="/data2/jungwon/AudScene/gligen_checkpoints/test_10/tag00/checkpoint_latest.pth")
     parser.add_argument("--no_plms", action='store_true', help="use DDIM instead. WARNING: I did not test the code yet")
@@ -243,140 +250,140 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    alpha_type_ = [1, 0, 0] # If you don't want to use guiding token, set this value to [0, 0, 1]
+    alpha_type_ = [1, 0, 0] #[0.9, 0.05, 0.05]
     save_folder_name_ = args.save_folder_name
-    bbox_for_all = [[0, 0, 511, 511]] # [xmin, ymin, xmax, ymax]
+    # bbox_for_all = [[0, 0, 511, 511]] # [xmin, ymin, xmax, ymax]
     meta_list = [
         dict(
-            prompt = "A photo of the cattle mooing",
+            prompt = "",
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/test/-/-S-TDT5oq0Q_000290.wav",  
-            bbox = bbox_for_all,
+            # bbox = bbox_for_all,
             save_folder_name = save_folder_name_,
             class_name = "cattle mooing"
         ),
         dict(
-            prompt = "A photo of the cat meowing",
+            prompt = "",
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/test/-/-gSfPQqi6nI_000030.wav",  
-            bbox = bbox_for_all,
+            # bbox = bbox_for_all,
             save_folder_name = save_folder_name_,
             class_name = "cat meowing"
         ),
         dict(
-            prompt = "A photo of the frog croaking",
+            prompt = "",
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/test/0/0N3-lCzOQPI_000000.wav",  
-            bbox = bbox_for_all,
+            # bbox = bbox_for_all,
             save_folder_name = save_folder_name_,
             class_name = "frog croaking"
         ),
         dict(
-            prompt = "A photo of the volcano explosion",
+            prompt = "",
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/test/1/1JfwuwHV0hc_000212.wav",  
-            bbox = bbox_for_all,
+            # bbox = bbox_for_all,
             save_folder_name = save_folder_name_,
             class_name = "volcano explosion"
         ),
         dict(
-            prompt = "A photo of the dog barking",
+            prompt = "",
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/test/2/2XFrBXTnNY8_000080.wav",  
-            bbox = bbox_for_all,
+            # bbox = bbox_for_all,
             save_folder_name = save_folder_name_,
             class_name = "dog barking"
         ),
         dict(
-            prompt = "A photo of the horse neighing",
+            prompt = "",
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/test/3/3iQ_xRurgS8_000030.wav",  
-            bbox = bbox_for_all,
+            # bbox = bbox_for_all,
             save_folder_name = save_folder_name_,
             class_name = "horse neighing"
         ),
         dict(
-            prompt = "A photo of the owl hooting",
+            prompt = "",
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/test/9/9AUSYLKYKGg_001113.wav",  
-            bbox = bbox_for_all,
+            # bbox = bbox_for_all,
             save_folder_name = save_folder_name_,
             class_name = "owl hooting"
         ),
         dict(
-            prompt = "A photo of the duck quacking",
+            prompt = "",
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/test/4/4GGUH7ykdCg_000022.wav",  
-            bbox = bbox_for_all,
+            # bbox = bbox_for_all,
             save_folder_name = save_folder_name_,
             class_name = "duck quacking"
         ),    
         dict(
-            prompt = "A photo of the hail",
+            prompt = "",
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/test/w/wZr8jXo1Uso_000102.wav",  
-            bbox = bbox_for_all,
+            # bbox = bbox_for_all,
             save_folder_name = save_folder_name_,
             class_name = "hail"
         ),    
         dict(
-            prompt = "A photo of the pig oinking",
+            prompt = "",
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/test/r/rvNKfBj-Nnk_000030.wav",  
-            bbox = bbox_for_all,
+            # bbox = bbox_for_all,
             save_folder_name = save_folder_name_,
             class_name = "pig oinking"
         ),
         dict(
-            prompt = "A photo of the cricket chirping",
+            prompt = "",
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/test/d/de8skUrbdUc_000030.wav",  
-            bbox = bbox_for_all,
+            # bbox = bbox_for_all,
             save_folder_name = save_folder_name_,
             class_name = "cricket chirping"
         ),              
         dict(
-            prompt = "A photo of the fire crackling",
+            prompt = "",
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/test/U/UsTk4M-U7-4_000246.wav",  
-            bbox = bbox_for_all,
+            # bbox = bbox_for_all,
             save_folder_name = save_folder_name_,
             class_name = "fire crackling"
         ),    
         dict(
-            prompt = "A photo of the lions roaring",
+            prompt = "",
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/test/g/g5FVJveyyVM_000030.wav",  
-            bbox = bbox_for_all,
+            # bbox = bbox_for_all,
             save_folder_name = save_folder_name_,
             class_name = "lions roaring"
         ),    
         dict(
-            prompt = "A photo of the ocean burbling",
+            prompt = "",
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/train/7/7CaBMXaxINY_000070.wav",  
-            bbox = bbox_for_all,
+            # bbox = bbox_for_all,
             save_folder_name = save_folder_name_,
             class_name = "ocean burbling"
         ),   
         dict(
-            prompt = "A photo of the bird chirping, tweeting",
+            prompt = "",
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/train/-/-HMmNXcZe1I_000053.wav",  
-            bbox = bbox_for_all,
+            # bbox = bbox_for_all,
             save_folder_name = save_folder_name_,
             class_name = "bird chirping, tweeting"
         ),   
     ]
 
-    ### Define audio_encoder (before MLP layer: C=768) -------------------------------------------- ###
+    ## Define audio_encoder (before MLP layer: C=768) -------------------------------------------- ###
     # (Change Line 35 in [config/vggsound_audio.yaml] as in_dim: 512 -> "in_dim: 768" to use this audio encoder)
     audio_encoder = Adapt_CLAP_Module(enable_fusion=False)
-    audio_checkpoint = torch.load("/data2/jungwon/AudScene/contrastive_learned_CLAP7/checkpoint_epoch_90.pth") # /data2/jungwon/AudScene/contrastive_learned_CLAP2/checkpoint_epoch_40.pth
+    audio_checkpoint = torch.load("/data2/jungwon/AudScene/contrastive_learned_CLAP6/checkpoint_epoch_30.pth") # /data2/jungwon/AudScene/contrastive_learned_CLAP2/checkpoint_epoch_40.pth
     audio_encoder.load_state_dict(audio_checkpoint['model_state_dict'])
     audio_encoder.eval()
     disable_grads(audio_encoder)
-    ### ------------------------------------------------------------------ ###
+    ## ------------------------------------------------------------------ ###
     # ### Define audio_encoder (before MLP layer: C=768) -------------------------------------------- ###
     # # (Change Line 35 in [config/vggsound_audio.yaml] as in_dim: 512 -> "in_dim: 768" to use this audio encoder)
     # audio_encoder = Adapt_CLAP_Module(enable_fusion=False)
@@ -385,11 +392,12 @@ if __name__ == "__main__":
     # disable_grads(audio_encoder)
     # ### ------------------------------------------------------------------ ###
     # ### Define audio_encoder (after MLP layer: C=512) -------------------------------------------- ###
-    # self.audio_encoder = laion_clap.CLAP_Module(enable_fusion=False)
-    # audio_checkpoint = torch.load("/data2/jungwon/AudScene/contrastive_learned_CLAP4/checkpoint_epoch_135.pth")
-    # self.audio_encoder.load_state_dict(audio_checkpoint['model_state_dict'])
-    # self.audio_encoder.eval()
-    # disable_grads(self.audio_encoder)
+    # audio_encoder = laion_clap.CLAP_Module(enable_fusion=False)
+    # # audio_checkpoint = torch.load("/data2/jungwon/AudScene/contrastive_learned_CLAP4/checkpoint_epoch_135.pth")
+    # # audio_encoder.load_state_dict(audio_checkpoint['model_state_dict'])
+    # audio_encoder.load_ckpt()
+    # audio_encoder.eval()
+    # disable_grads(audio_encoder)
     # ### ------------------------------------------------------------------ ###
     for meta in meta_list:
         run(meta, args, starting_noise=None, audio_encoder=audio_encoder)

@@ -217,7 +217,7 @@ class Trainer:
         ### Define audio_encoder (before MLP layer: C=768) -------------------------------------------- ###
             # (Change Line 35 in [config/vggsound_audio.yaml] as in_dim: 512 -> "in_dim: 768" to use this audio encoder)
         self.audio_encoder = Adapt_CLAP_Module(enable_fusion=False)
-        audio_checkpoint = torch.load("/data2/jungwon/AudScene/contrastive_learned_CLAP4/checkpoint_epoch_135.pth") # 15
+        audio_checkpoint = torch.load("/data2/jungwon/AudScene/contrastive_learned_CLAP7/checkpoint_epoch_90.pth") # 15
         self.audio_encoder.load_state_dict(audio_checkpoint['model_state_dict'])
         self.audio_encoder.eval()
         disable_grads(self.audio_encoder)

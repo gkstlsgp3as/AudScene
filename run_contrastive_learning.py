@@ -15,7 +15,7 @@ from tqdm import tqdm
 import logging
 
 # ---- Define logger ----------------------- #
-os.makedirs("/data2/jungwon/AudScene/contrastive_learned_CLAP5/", exist_ok=True)
+os.makedirs("/data2/jungwon/AudScene/contrastive_learned_CLAP7/", exist_ok=True)
 # logging.basicConfig(filename='/data2/jungwon/AudScene/contrastive_learned_CLAP3/train.log')
 def get_logger(log_path):
     logger = logging.getLogger()
@@ -28,7 +28,7 @@ def get_logger(log_path):
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
     return logger
-logger = get_logger("/data2/jungwon/AudScene/contrastive_learned_CLAP5/train.log")
+logger = get_logger("/data2/jungwon/AudScene/contrastive_learned_CLAP7/train.log")
 
 device = "cuda"
 logger.info("Contrastive Learning started!!")
@@ -41,7 +41,7 @@ with open(csv_path, 'r') as f:
     name_category = f.readlines()
 
 #  (Added) name_category -> small_name_category ------ #
-csv_path2 = "/data2/VGGSound/vggsound_mag20_aud40_1207.csv"
+csv_path2 = "/data2/VGGSound/vggsound_mag20_aud40_caption_HPS_bbox_1218.csv"
 with open(csv_path2, 'r') as f:
     small = f.readlines()
 
@@ -99,7 +99,7 @@ def recursively_read_audios(rootdir, must_contain, exts=["wav"]): # please check
 
 
 # ---- Construct audio files ----------------------- #
-audio_rootdir = "/data2/VGGSound/audio_mag20_aud40_caption_1208/train/"
+audio_rootdir = "/data2/VGGSound/audio_mag20_aud40_caption_HPS_bbox_1218/train/"
 
 audio_files = recursively_read_audios(rootdir=audio_rootdir, must_contain="")
 audio_files.sort()
@@ -107,7 +107,7 @@ audio_files.sort()
 
 
 # ---- Load name_dict ----------------------- #
-name_dict_path = "/data2/jungwon/AudScene/name_dict_1208.json"
+name_dict_path = "/data2/jungwon/AudScene/name_dict_1218.json"
 
 with open(name_dict_path, 'r') as f: 
     name_dict = json.load(f)
@@ -419,14 +419,14 @@ for epoch in range(num_epochs):
         optimizer.step()
     print("Epoch: {}, Loss: {}".format(epoch, loss_value.item()))
     if epoch % 5 == 0:
-        val_audio_rootdir = "/data2/VGGSound/audio_mag20_aud40_caption_1208/test"
+        val_audio_rootdir = "/data2/VGGSound/audio_mag20_aud40_caption_HPS_bbox_1218/test/"
         valid_score = validate_in_test(val_audio_rootdir, name_category, prompt_emb_dict, category_list)
         logging.info("Epoch: {}, Validation cosine similarity: {}".format(epoch, valid_score))
         torch.save({
             'model_state_dict': audio_encoder.state_dict(),
             'optimizer_state_dict': optimizer.state_dict(),
             'projection_layer_state_dict': projection_layer.state_dict(),
-            }, '/data2/jungwon/AudScene/contrastive_learned_CLAP5/checkpoint_epoch_{}.pth'.format(epoch))
+            }, '/data2/jungwon/AudScene/contrastive_learned_CLAP7/checkpoint_epoch_{}.pth'.format(epoch))
 # --------------------------- #
 """
 [Before you run]

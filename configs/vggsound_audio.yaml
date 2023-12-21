@@ -19,7 +19,7 @@ model:
     num_heads: 8
     transformer_depth: 1
     context_dim: 768
-    fuser_type: gatedSA  #  gatedCA or gatedSA. We have ablate this, self-attention is better than cross-attention, thus please set this as gatedSA usually
+    fuser_type: gatedCA  #  gatedCA or gatedSA. We have ablate this, self-attention is better than cross-attention, thus please set this as gatedSA usually
     use_checkpoint: True
 
 

@@ -23,6 +23,7 @@ from dataset.concat_dataset import ConCatDataset
 from clap_modules import Adapt_CLAP_Module
 from torch.utils.data import DataLoader
 from tqdm import tqdm
+import random
 
 import librosa
 import laion_clap
@@ -51,6 +52,7 @@ def alpha_generator(length, type=None):
     and the last 100 stpes are 0.    
     """
     if type == None:
+        raise Exception("Please specify the type of alpha")
         type = [1,0,0]
 
     assert len(type)==3 
@@ -172,7 +174,7 @@ def run(meta, args, starting_noise=None, audio_encoder=None):
     config = OmegaConf.create(config)
 
     # - - - - - sampler - - - - - # 
-    alpha_generator_func = partial(alpha_generator, type=config.get("alpha_type"))
+    alpha_generator_func = partial(alpha_generator, type=meta["alpha_type"])
     if config.no_plms:
         sampler = DDIMSampler(diffusion, model, alpha_generator_func=alpha_generator_func, set_alpha_scale=set_alpha_scale)
         steps = 250 
@@ -243,12 +245,13 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    alpha_type_ = [1, 0, 0] # If you don't want to use guiding token, set this value to [0, 0, 1]
+    alpha_type_ = [0.9, 0, 0.1] # If you don't want to use guiding token, set this value to [0, 0, 1]
     save_folder_name_ = args.save_folder_name
     bbox_for_all = [[0, 0, 511, 511]] # [xmin, ymin, xmax, ymax]
+    cond_word = " "
     meta_list = [
         dict(
-            prompt = "A photo of the cattle mooing",
+            prompt = "A photo of the {}cattle".format(cond_word),
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/test/-/-S-TDT5oq0Q_000290.wav",  
             bbox = bbox_for_all,
@@ -256,7 +259,7 @@ if __name__ == "__main__":
             class_name = "cattle mooing"
         ),
         dict(
-            prompt = "A photo of the cat meowing",
+            prompt = "A photo of the {}cat".format(cond_word),
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/test/-/-gSfPQqi6nI_000030.wav",  
             bbox = bbox_for_all,
@@ -264,7 +267,7 @@ if __name__ == "__main__":
             class_name = "cat meowing"
         ),
         dict(
-            prompt = "A photo of the frog croaking",
+            prompt = "A photo of the {}frog".format(cond_word),
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/test/0/0N3-lCzOQPI_000000.wav",  
             bbox = bbox_for_all,
@@ -272,7 +275,7 @@ if __name__ == "__main__":
             class_name = "frog croaking"
         ),
         dict(
-            prompt = "A photo of the volcano explosion",
+            prompt = "A photo of the {}volcano".format(cond_word),
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/test/1/1JfwuwHV0hc_000212.wav",  
             bbox = bbox_for_all,
@@ -280,7 +283,7 @@ if __name__ == "__main__":
             class_name = "volcano explosion"
         ),
         dict(
-            prompt = "A photo of the dog barking",
+            prompt = "A photo of the {}dog".format(cond_word),
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/test/2/2XFrBXTnNY8_000080.wav",  
             bbox = bbox_for_all,
@@ -288,7 +291,7 @@ if __name__ == "__main__":
             class_name = "dog barking"
         ),
         dict(
-            prompt = "A photo of the horse neighing",
+            prompt = "A photo of the {}horse".format(cond_word),
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/test/3/3iQ_xRurgS8_000030.wav",  
             bbox = bbox_for_all,
@@ -296,7 +299,7 @@ if __name__ == "__main__":
             class_name = "horse neighing"
         ),
         dict(
-            prompt = "A photo of the owl hooting",
+            prompt = "A photo of the {}owl".format(cond_word),
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/test/9/9AUSYLKYKGg_001113.wav",  
             bbox = bbox_for_all,
@@ -304,7 +307,7 @@ if __name__ == "__main__":
             class_name = "owl hooting"
         ),
         dict(
-            prompt = "A photo of the duck quacking",
+            prompt = "A photo of the {}duck".format(cond_word),
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/test/4/4GGUH7ykdCg_000022.wav",  
             bbox = bbox_for_all,
@@ -312,7 +315,7 @@ if __name__ == "__main__":
             class_name = "duck quacking"
         ),    
         dict(
-            prompt = "A photo of the hail",
+            prompt = "A photo of the {}hail".format(cond_word),
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/test/w/wZr8jXo1Uso_000102.wav",  
             bbox = bbox_for_all,
@@ -320,7 +323,7 @@ if __name__ == "__main__":
             class_name = "hail"
         ),    
         dict(
-            prompt = "A photo of the pig oinking",
+            prompt = "A photo of the {}pig".format(cond_word),
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/test/r/rvNKfBj-Nnk_000030.wav",  
             bbox = bbox_for_all,
@@ -328,7 +331,7 @@ if __name__ == "__main__":
             class_name = "pig oinking"
         ),
         dict(
-            prompt = "A photo of the cricket chirping",
+            prompt = "A photo of the {}cricket".format(cond_word),
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/test/d/de8skUrbdUc_000030.wav",  
             bbox = bbox_for_all,
@@ -336,7 +339,7 @@ if __name__ == "__main__":
             class_name = "cricket chirping"
         ),              
         dict(
-            prompt = "A photo of the fire crackling",
+            prompt = "A photo of the {}fire".format(cond_word),
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/test/U/UsTk4M-U7-4_000246.wav",  
             bbox = bbox_for_all,
@@ -344,7 +347,7 @@ if __name__ == "__main__":
             class_name = "fire crackling"
         ),    
         dict(
-            prompt = "A photo of the lions roaring",
+            prompt = "A photo of the {}lions".format(cond_word),
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/test/g/g5FVJveyyVM_000030.wav",  
             bbox = bbox_for_all,
@@ -352,7 +355,7 @@ if __name__ == "__main__":
             class_name = "lions roaring"
         ),    
         dict(
-            prompt = "A photo of the ocean burbling",
+            prompt = "A photo of the {}ocean".format(cond_word),
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/train/7/7CaBMXaxINY_000070.wav",  
             bbox = bbox_for_all,
@@ -360,7 +363,7 @@ if __name__ == "__main__":
             class_name = "ocean burbling"
         ),   
         dict(
-            prompt = "A photo of the bird chirping, tweeting",
+            prompt = "A photo of the {}bird".format(cond_word),
             alpha_type = alpha_type_, # If you don't want to use guiding token, set this value to [0, 0, 1]
             audio_path = "/data2/VGGSound/audio_mag20_aud40_1207/train/-/-HMmNXcZe1I_000053.wav",  
             bbox = bbox_for_all,
@@ -391,5 +394,17 @@ if __name__ == "__main__":
     # self.audio_encoder.eval()
     # disable_grads(self.audio_encoder)
     # ### ------------------------------------------------------------------ ###
+
+
+    # Fix seed for reproducibility
+    def set_seed(seed):
+        random.seed(seed)
+        np.random.seed(seed)
+        torch.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+        os.environ['PYTHONHASHSEED'] = str(seed)
+
+    # Call the function with your desired seed
+    set_seed(42)
     for meta in meta_list:
         run(meta, args, starting_noise=None, audio_encoder=audio_encoder)

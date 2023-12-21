@@ -55,10 +55,11 @@ def recursively_read_audios(rootdir, must_contain, exts=["wav"]): # please check
 
 
 class AudioDataset():
-    def __init__(self, image_rootdir, audio_rootdir, caption_path, prob_use_caption=1, image_size=512, random_flip=False):
+    def __init__(self, image_rootdir, audio_rootdir, caption_path, bbox_path, prob_use_caption=1, image_size=512, random_flip=False):
         self.image_rootdir = image_rootdir
         self.audio_rootdir = audio_rootdir
         self.caption_path = caption_path
+        self.bbox_path = bbox_path
         self.prob_use_caption = prob_use_caption 
         self.image_size = image_size
         self.random_flip = random_flip
@@ -76,6 +77,10 @@ class AudioDataset():
         with open(caption_path, 'r') as f:
             self.image_filename_to_caption_mapping = json.load(f)
         
+        # Open bbox json
+        with open(self.bbox_path, 'r') as f:
+            self.bbox_dict = json.load(f)
+        
         assert len(self.image_files) == len(self.audio_files) == len(self.image_filename_to_caption_mapping)
         self.pil_to_tensor = transforms.PILToTensor()
 
@@ -89,6 +94,7 @@ class AudioDataset():
 
         out['id'] = index
         out['audio_path'] = str(self.audio_files[index]) # DataLoader's default collate function doesn't know how to handle pathlib.PosixPath objects -> use str()
+        out['bbox'] = torch.tensor(self.bbox_dict[os.path.basename(out['audio_path'])][0]) # torch.Size([4])
         image = Image.open(image_path).convert("RGB")
 
         # - - - - - center_crop, resize and random_flip - - - - - - #  
@@ -99,6 +105,9 @@ class AudioDataset():
         
         if self.random_flip and random.random()<0.5:
             image = ImageOps.mirror(image)
+            tmp = out['bbox']
+            tmp2 = torch.tensor([511-tmp[2], tmp[1], 511-tmp[0], tmp[3]])
+            out['bbox'] = tmp2
         
         out['image'] = ( self.pil_to_tensor(image).float()/255 - 0.5 ) / 0.5
         out['mask'] = torch.tensor(1.0)

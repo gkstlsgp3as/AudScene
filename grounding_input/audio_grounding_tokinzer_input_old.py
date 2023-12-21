@@ -22,15 +22,15 @@ class GroundingNetInput:
             self.set = False # random drop
 
         mask = batch['mask']
-        bbox = batch['bbox']
+        # bbox = batch['bbox']
 
         self.batch, self.N, self.C = audio_embeddings.shape
         self.device = audio_embeddings.device
         self.dtype = audio_embeddings.dtype
-        bbox = bbox.reshape(self.batch, 1, 4)
-        bbox = bbox.repeat(1, self.N, 1) # torch.Size([batch, num_tokens, 4])
+        # bbox = bbox.reshape(self.batch, 1, 4)
+        # bbox = bbox.repeat(1, self.N, 1) # torch.Size([batch, num_tokens, 4])
 
-        return {"audio_embeddings": audio_embeddings, "mask": mask, "bbox": bbox}
+        return {"audio_embeddings": audio_embeddings, "mask": mask}
 
 
 
@@ -48,10 +48,10 @@ class GroundingNetInput:
 
         audio_embeddings = th.zeros(self.batch, self.N, self.C).type(dtype).to(device)
         mask = th.zeros(batch).type(dtype).to(device)
-        bbox = (th.tensor([0, 0, 511, 511])).repeat(self.batch, self.N, 1).type(dtype).to(device)
+        # bbox = (th.tensor([0, 0, 511, 511])).repeat(self.batch, self.N, 1).type(dtype).to(device)
 
 
-        return {"audio_embeddings": audio_embeddings, "mask": mask, "bbox": bbox}
+        return {"audio_embeddings": audio_embeddings, "mask": mask}
 
 
 
