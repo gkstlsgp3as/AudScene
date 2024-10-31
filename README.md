@@ -8,6 +8,8 @@
 Audio-to-scene generation faces challenges in achieving high controllability due to the limited expressiveness of non-verbal audio and a scarcity of high-quality audio-scene datasets. To address this, we refine a widely used video dataset and incorporate text and bounding box guidance into the audio-to-scene generation using an adapted version of GLIGEN. Our method enhances controllability by utilizing the expressive nature of text guidance, correcting errors of a large pre-trained text-to-image generative model through the integration of audio signals. Notably, our approach achieves a state-of-the-art CLIP retrieval score when audio signals are the sole input. These results highlight a promising architectural choice for text-guided audio-to-scene generation. For future work, we aim to refine bounding box labels in the training set to align more accurately with bounding box guidance.
 
 Our model incorporates audio and bounding box information through guiding tokens in GLIGEN, a highly controllable text-to-image generative model. We trained this model with image and audio pairs extracted from video files, coupled with bounding box data obtained from Grounding DINO, an object detector. For generating caption tokens, we employed LLaVA \cite{liu2023visual}, a captioning VLM.
+
+
 ![1_model_architecture](https://github.com/user-attachments/assets/b469906b-7e65-4fb0-b7ed-cd63256cce50)
 
 
@@ -29,23 +31,6 @@ We provide ten checkpoints for different use scenarios. All models here are base
 | Generation | Normal map     | [HF Hub](https://huggingface.co/gligen/gligen-generation-normal/blob/main/diffusion_pytorch_model.bin)      |
 
 Note that the provided checkpoint for semantic map is only trained on ADE20K dataset; the checkpoint for normal map is only trained on DIODE dataset.
-
-## Requirements
-* Python 3.10, Pytorch 2.1.2, [xformers](https://github.com/facebookresearch/xformers) 0.0.23
-* More detail (See [environment.yml](environment.yml))
-A suitable [conda](https://conda.io/) environment named `resshift` can be created and activated with:
-
-```
-conda create -n resshift python=3.10
-conda activate resshift
-conda install pytorch==2.1.1 torchvision==0.16.1 torchaudio==2.1.1 pytorch-cuda=12.1 -c pytorch -c nvidia
-pip install -r requirements_4dsr.txt
-```
-or
-```
-conda env create -f environment.yml
-conda activate resshift
-```
 
 ### :point_right: Results
 #### Image generation with incremental audio guidance. 
