@@ -1,4 +1,4 @@
-# Enhancing Controllability in Audio-to-Scene Generation with a Text-Guided Diffusion Model
+# Enhancing Controllability in Audio-to-Scene Generation with a Text-Guided Diffusion Model
  (SNU M3309.002900. Machine Listening) 
 
 ### Abstract
