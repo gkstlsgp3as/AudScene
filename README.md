@@ -1,8 +1,6 @@
 # Enhancing Controllability in Audio-to-Scene Generation with a Text-Guided Diffusion Model
  (SNU M3309.002900. Machine Listening) 
 
-[Jungwon Park](https://github.com/Jungwona), [Jungmin Ko](https://github.com/JungminKo), [Shinhye Han](https://gkstlsgp3as.github.io/)
-
 ### Abstract
 ---
 Audio-to-scene generation faces challenges in achieving high controllability due to the limited expressiveness of non-verbal audio and a scarcity of high-quality audio-scene datasets. To address this, we refine a widely used video dataset and incorporate text and bounding box guidance into the audio-to-scene generation using an adapted version of GLIGEN. Our method enhances controllability by utilizing the expressive nature of text guidance, correcting errors of a large pre-trained text-to-image generative model through the integration of audio signals. Notably, our approach achieves a state-of-the-art CLIP retrieval score when audio signals are the sole input. These results highlight a promising architectural choice for text-guided audio-to-scene generation. For future work, we aim to refine bounding box labels in the training set to align more accurately with bounding box guidance.
